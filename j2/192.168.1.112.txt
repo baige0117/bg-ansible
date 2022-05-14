@@ -1,0 +1,66 @@
+hostname VTP_A_AYE-TUAS_EX3_LWDELTA_VPN01
+!
+banner login ^
+***************************************************************************
+***                            WARNING!                                 ***
+***    This is a Singapore Police Force protected computer system. If   ***
+***  you are not authorised to access this system DO NOT attempt to     ***
+***  log-in!                                                            ***
+***    Usage of this system, as well as access to all classified        ***
+***  information and personal data will be monitored. Any unauthorised  ***
+***  access or use of this computer system is liable to disciplinary    ***
+***  action and/or criminal prosecution. For more information, please   ***
+***  contact your ITLO/DTO.                                             ***
+***************************************************************************"
+^
+banner motd ^
+***************************************************************************
+***                            WARNING!                                 ***
+***    This is a Singapore Police Force protected computer system. If   ***
+***  you are not authorised to access this system DO NOT attempt to     ***
+***  log-in!                                                            ***
+***    Usage of this system, as well as access to all classified        ***
+***  information and personal data will be monitored. Any unauthorised  ***
+***  access or use of this computer system is liable to disciplinary    ***
+***  action and/or criminal prosecution. For more information, please   ***
+***  contact your ITLO/DTO.                                             ***
+***************************************************************************"
+^
+!
+interface Loopback0
+ ip address 10.255.255.12 255.255.255.255
+ no shutdown
+!         
+interface Loopback1
+ ip address 10.255.12.1 255.255.255.0
+ ip ospf 1 area 0
+ no shutdown
+!
+interface Tunnel0
+ ip address 172.16.12.1 255.255.255.0
+ ip ospf 1 area 0
+ tunnel source Loopback0
+ tunnel destination 10.255.255.100
+ no shutdown
+!
+interface Ethernet0/0
+ description MGMT_INTERFACE
+!
+interface Ethernet0/1
+ description CONNECT TO ISP
+ ip address 10.100.12.1 255.255.255.252
+ no shutdown
+!
+router ospf 1
+ router-id 10.255.255.12
+!
+router bgp 65012
+ bgp log-neighbor-changes
+ network 10.255.255.12 mask 255.255.255.255
+ neighbor 10.100.12.2 remote-as 100
+!
+ntp source Loopback0
+ntp server 10.255.255.100
+!
+no ip domain lookup
+!
